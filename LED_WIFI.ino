@@ -23,16 +23,38 @@ WiFiServer server(80);
 
 void setup() 
 {
+  dht.begin();
+  lcd.begin(16, 2);
   initHardware();
   connectWiFi();
   server.begin();
   setupMDNS();
-  dht.begin();
-  lcd.begin(16, 2);
+  
 }
 
 void loop() 
 {
+  delay(2000);
+  float h = dht.readHumidity();  
+  float f = dht.readTemperature(true);
+
+  if (isnan(h)|| isnan(f)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  lcd.setCursor(0,0); 
+  lcd.print("Temp: ");
+  lcd.print(f);
+  lcd.print((char)223);
+  lcd.print("F");
+  lcd.setCursor(0,1);
+  lcd.print("Humidity: ");
+  lcd.print(h);
+  lcd.print("%"); 
+
+
+  
   // Check if a client has connected
   
   WiFiClient client = server.available();
@@ -60,28 +82,7 @@ void loop()
   if (val >= 0)
     digitalWrite(LED_PIN, val);
 
-  client.flush();
-
-  delay(2000);
-  float h = dht.readHumidity();
-  delay(500);
-  float f = dht.readTemperature(true);
-
-  if (isnan(h)|| isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
-  }
-
-  lcd.setCursor(0,0); 
-  lcd.print("Temp: ");
-  lcd.print(f);
-  lcd.print((char)223);
-  lcd.print("F");
-  lcd.setCursor(0,1);
-  lcd.print("Humidity: ");
-  lcd.print(h);
-  lcd.print("%");
-  delay(1000);
+  client.flush();  
 
   // Prepare the response. Start with the common header:
   String s = "HTTP/1.1 200 OK\r\n";
@@ -94,7 +95,7 @@ void loop()
    *      your sensors and I/O pins. To adjust the fresh rate, 
    *      adjust the value for content. For 30 seconds, simply 
    *      change the value to 30.*/
-  s += "<meta http-equiv='refresh' content='10'/>\r\n";//auto refresh page
+  s += "<meta http-equiv='refresh' content='1'/>\r\n";//auto refresh page
 
   // If we're setting the LED, print out a message saying we did
   if (val >= 0)
@@ -156,9 +157,15 @@ void connectWiFi()
     // Add delays -- allowing the processor to perform other
     // tasks -- wherever possible.
   }
-  Serial.println("WiFi connected");  
+  /*Serial.println("WiFi connected");  
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  */
+  lcd.setCursor(0,0);
+  lcd.print("IP address:");
+  lcd.setCursor(0,1);
+  lcd.print(WiFi.localIP());
+  delay(5000);
 }
 
 void setupMDNS()
