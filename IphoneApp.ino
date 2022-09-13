@@ -59,8 +59,9 @@ void setup() {
   Serial.println("");
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  Serial.println(WiFi.localIP());  
   lcd.print(WiFi.localIP());
+  delay(3000);
   server.begin();
 }
 
