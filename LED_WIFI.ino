@@ -8,9 +8,8 @@
 //////////////////////
 // WiFi Definitions //
 //////////////////////
-const char WiFiSSID[] = "Neguete-WIFI";
-//const char WiFiSSID[] = "NEGUETE";
-const char WiFiPSK[] = "youpoor123";
+const char WiFiSSID[] = "";
+const char WiFiPSK[] = "";
 
 /////////////////////
 // Pin Definitions //
